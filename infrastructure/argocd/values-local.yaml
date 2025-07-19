@@ -1,0 +1,98 @@
+# Local ArgoCD configuration
+argo-cd:
+  # Disable dex for local development
+  configs:
+    params:
+      server.insecure: true
+    cm:
+      url: "https://argocd.aircast.localhost"
+      # Allow local insecure connections
+      tls.config: ""
+      oidc.config: ""
+      
+  # Use admin/admin for local development
+  server:
+    # Expose service for local access
+    service:
+      type: NodePort
+      nodePortHttp: 30080
+      nodePortHttps: 30443
+    
+    # Basic resources for local
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    
+    # Disable certificate validation for local
+    extraArgs:
+      - --insecure
+
+  # Basic controller resources
+  controller:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+
+  # Basic repo server resources
+  repoServer:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  # Basic application set controller
+  applicationSet:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+  # Disable notifications for local
+  notifications:
+    enabled: false
+
+  # Disable Redis HA for local
+  redis-ha:
+    enabled: false
+
+  # Use single Redis instance
+  redis:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+# Local ingress configuration
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "selfsigned-cluster-issuer"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  hosts:
+    - host: argocd.aircast.localhost
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: argocd-local-tls
+      hosts:
+        - argocd.aircast.localhost

@@ -1,0 +1,159 @@
+# Production ArgoCD configuration
+argo-cd:
+  configs:
+    params:
+      server.insecure: false
+    cm:
+      url: "https://argocd.aircast.one"
+      # OIDC configuration for team access
+      oidc.config: |
+        name: GitHub
+        issuer: https://github.com
+        clientId: $argocd-github-oauth:clientId
+        clientSecret: $argocd-github-oauth:clientSecret
+        requestedScopes: ["user:email", "read:org"]
+        requestedIDTokenClaims: {"groups": {"essential": true}}
+      # Strict RBAC for production
+      policy.default: ""
+      policy.csv: |
+        p, role:admin, applications, *, */*, allow
+        p, role:admin, clusters, *, *, allow
+        p, role:admin, repositories, *, *, allow
+        p, role:deployer, applications, get, */*, allow
+        p, role:deployer, applications, sync, */*, allow
+        p, role:viewer, applications, get, */*, allow
+        g, aircast:admin-team, role:admin
+        g, aircast:dev-team, role:deployer
+        g, aircast:ops-team, role:viewer
+
+  server:
+    # High availability for production
+    replicas: 3
+    resources:
+      requests:
+        cpu: 500m
+        memory: 512Mi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+    
+    # Anti-affinity for HA
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: argocd-server
+          topologyKey: kubernetes.io/hostname
+    
+    # Enable metrics and monitoring
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+  controller:
+    # High availability for production
+    replicas: 1
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+      limits:
+        cpu: 4000m
+        memory: 8Gi
+    
+    # Enable metrics and monitoring
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+  repoServer:
+    # High availability for production
+    replicas: 3
+    resources:
+      requests:
+        cpu: 500m
+        memory: 512Mi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+    
+    # Anti-affinity for HA
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: argocd-repo-server
+          topologyKey: kubernetes.io/hostname
+    
+    # Enable metrics and monitoring
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+  applicationSet:
+    # Enable for app-of-apps pattern
+    enabled: true
+    replicas: 2
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+
+  # Enable notifications for production alerts
+  notifications:
+    enabled: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  # Redis HA for production reliability
+  redis-ha:
+    enabled: true
+    replicas: 3
+    persistentVolume:
+      size: 20Gi
+      storageClass: "fast-ssd"
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+# Production ingress with Let's Encrypt production
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    # Enhanced security headers for production
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+      more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
+      more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'";
+  hosts:
+    - host: argocd.aircast.one
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: argocd-prod-tls
+      hosts:
+        - argocd.aircast.one

@@ -1,0 +1,50 @@
+# Local development Vault configuration
+vault:
+  # Development mode - NOT for production
+  server:
+    dev:
+      enabled: true
+      devRootToken: "myroot"
+    
+    # Disable HA for local development
+    ha:
+      enabled: false
+    
+    # Single instance for local
+    standalone:
+      enabled: true
+    
+    # Resource limits for local development
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+
+  # Disable injector for simplicity
+  injector:
+    enabled: false
+
+  # Enable UI for local development
+  ui:
+    enabled: true
+    serviceType: ClusterIP
+
+# Custom ingress for Vault UI
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  hosts:
+    - host: vault.aircast.localhost
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: vault-local-tls
+      hosts:
+        - vault.aircast.localhost

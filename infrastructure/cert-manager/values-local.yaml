@@ -1,0 +1,38 @@
+# Local cert-manager configuration
+cert-manager:
+  # Install CRDs
+  installCRDs: true
+  
+  # Resource limits for local
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+  webhook:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+
+  cainjector:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+# Self-signed cluster issuer for local development
+clusterIssuer:
+  enabled: true
+  name: selfsigned-cluster-issuer
+  spec:
+    selfSigned: {}

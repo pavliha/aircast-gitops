@@ -1,0 +1,67 @@
+# Development environment Vault configuration
+vault:
+  # Production-like setup for dev
+  server:
+    # Disable dev mode
+    dev:
+      enabled: false
+    
+    # Enable HA for dev environment
+    ha:
+      enabled: true
+      replicas: 3
+      raft:
+        enabled: true
+        setNodeId: true
+        config: |
+          ui = true
+          listener "tcp" {
+            tls_disable = 1
+            address = "[::]:8200"
+            cluster_address = "[::]:8201"
+          }
+          storage "raft" {
+            path = "/vault/data"
+          }
+          service_registration "kubernetes" {}
+    
+    # Resource allocation for dev
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 500m
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+    
+    # Persistent storage for dev
+    dataStorage:
+      enabled: true
+      size: 10Gi
+      storageClass: null
+
+  # Disable injector
+  injector:
+    enabled: false
+
+  # Enable UI
+  ui:
+    enabled: true
+    serviceType: ClusterIP
+
+# Ingress for dev environment
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: vault.dev.aircast.one
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: vault-dev-tls
+      hosts:
+        - vault.dev.aircast.one

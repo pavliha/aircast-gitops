@@ -1,0 +1,43 @@
+# Local external-secrets configuration
+external-secrets:
+  # Install CRDs
+  installCRDs: true
+  
+  # Resource limits for local development
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+  webhook:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 50m
+        memory: 128Mi
+
+  certController:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 50m
+        memory: 128Mi
+
+# Vault cluster secret store for local
+vaultSecretStore:
+  enabled: true
+  name: vault-kv-secret
+  vaultServer: "http://vault:8200"
+  vaultPath: "secret"
+  vaultVersion: "v2"
+  tokenSecret:
+    name: vault-token
+    key: token
+    value: myroot  # Local dev token

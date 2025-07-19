@@ -1,0 +1,46 @@
+# Development cert-manager configuration
+cert-manager:
+  # Install CRDs
+  installCRDs: true
+  
+  # Standard resource allocation for dev
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  webhook:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+  cainjector:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
+
+# Let's Encrypt staging for dev environment
+clusterIssuer:
+  enabled: true
+  name: letsencrypt-staging
+  spec:
+    acme:
+      server: https://acme-staging-v02.api.letsencrypt.org/directory
+      email: admin@aircast.one
+      privateKeySecretRef:
+        name: letsencrypt-staging
+      solvers:
+      - http01:
+          ingress:
+            class: nginx

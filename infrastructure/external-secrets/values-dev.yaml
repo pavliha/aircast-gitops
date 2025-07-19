@@ -1,0 +1,44 @@
+# Development external-secrets configuration
+external-secrets:
+  # Install CRDs
+  installCRDs: true
+  
+  # Standard resource allocation for dev
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  webhook:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+  certController:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+# Vault cluster secret store for dev
+vaultSecretStore:
+  enabled: true
+  name: vault-kv-secret
+  vaultServer: "http://vault:8200"
+  vaultPath: "secret"
+  vaultVersion: "v2"
+  tokenSecret:
+    name: vault-token
+    key: token
+    # In dev, this should be set via CI/CD or manual secret creation
+    # value: "" # Set externally

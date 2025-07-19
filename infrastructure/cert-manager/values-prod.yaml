@@ -1,0 +1,56 @@
+# Production cert-manager configuration
+cert-manager:
+  # Install CRDs
+  installCRDs: true
+  
+  # Production resource allocation
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+  webhook:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    
+    # High availability for production
+    replicaCount: 2
+
+  cainjector:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    
+    # High availability for production
+    replicaCount: 2
+
+  # Production-grade monitoring
+  prometheus:
+    enabled: true
+
+# Let's Encrypt production for prod environment
+clusterIssuer:
+  enabled: true
+  name: letsencrypt-prod
+  spec:
+    acme:
+      server: https://acme-v02.api.letsencrypt.org/directory
+      email: admin@aircast.one
+      privateKeySecretRef:
+        name: letsencrypt-prod
+      solvers:
+      - http01:
+          ingress:
+            class: nginx

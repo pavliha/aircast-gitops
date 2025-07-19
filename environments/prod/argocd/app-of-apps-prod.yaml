@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infrastructure-apps-prod
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: infrastructure-apps
+    app.kubernetes.io/part-of: bootstrap
+    environment: prod
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/pavliha/aircast-gitops.git
+    targetRevision: HEAD
+    path: applications/infrastructure
+    directory:
+      recurse: true
+      # Template applications for prod environment
+      jsonnet:
+        extVars:
+          - name: environment
+            value: prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    # More controlled sync for production
+    automated:
+      prune: false  # Manual prune for production safety
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
+  revisionHistoryLimit: 20  # Keep more history for production

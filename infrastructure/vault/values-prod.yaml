@@ -1,0 +1,83 @@
+# Production Vault configuration
+vault:
+  # Production setup
+  server:
+    # Disable dev mode
+    dev:
+      enabled: false
+    
+    # High availability setup
+    ha:
+      enabled: true
+      replicas: 5
+      raft:
+        enabled: true
+        setNodeId: true
+        config: |
+          ui = true
+          listener "tcp" {
+            tls_disable = 1
+            address = "[::]:8200"
+            cluster_address = "[::]:8201"
+          }
+          storage "raft" {
+            path = "/vault/data"
+          }
+          service_registration "kubernetes" {}
+    
+    # Production resource allocation
+    resources:
+      requests:
+        memory: 1Gi
+        cpu: 1000m
+      limits:
+        memory: 2Gi
+        cpu: 2000m
+    
+    # Persistent storage for production
+    dataStorage:
+      enabled: true
+      size: 50Gi
+      storageClass: "fast-ssd"  # Use fast storage
+    
+    # Security configurations
+    affinity: |
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: {{ template "vault.name" . }}
+                app.kubernetes.io/instance: "{{ .Release.Name }}"
+                component: server
+            topologyKey: kubernetes.io/hostname
+
+  # Disable injector
+  injector:
+    enabled: false
+
+  # Enable UI for admin access
+  ui:
+    enabled: true
+    serviceType: ClusterIP
+
+# Production ingress
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Add security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+  hosts:
+    - host: vault.aircast.one
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: vault-prod-tls
+      hosts:
+        - vault.aircast.one

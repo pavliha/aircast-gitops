@@ -1,0 +1,54 @@
+# Production external-secrets configuration
+external-secrets:
+  # Install CRDs
+  installCRDs: true
+  
+  # Production resource allocation
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+  webhook:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    
+    # High availability for production
+    replicaCount: 2
+
+  certController:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    
+    # High availability for production
+    replicaCount: 2
+
+  # Production monitoring
+  serviceMonitor:
+    enabled: true
+
+# Vault cluster secret store for production
+vaultSecretStore:
+  enabled: true
+  name: vault-kv-secret
+  vaultServer: "http://vault:8200"
+  vaultPath: "secret"
+  vaultVersion: "v2"
+  tokenSecret:
+    name: vault-token
+    key: token
+    # In production, this MUST be set via secure CI/CD
+    # value: "" # Set via secure external process

@@ -1,0 +1,22 @@
+*.zip
+
+# Helm dependencies
+Chart.lock
+charts/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test files
+test-*.yaml
+simple-test.yaml
+
+# Environment specific secrets
+**/secrets/
+secrets.yaml
