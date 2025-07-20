@@ -1,23 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: vault
+  name: cert-manager
   namespace: argocd
   labels:
-    app.kubernetes.io/name: vault
+    app.kubernetes.io/name: cert-manager
     app.kubernetes.io/part-of: infrastructure
 spec:
   project: default
   source:
     repoURL: https://github.com/pavliha/aircast-gitops.git
     targetRevision: HEAD
-    path: infrastructure/vault
+    path: infrastructure/cert-manager
     helm:
       valueFiles:
-        - values-{{ .Values.environment }}.yaml
+        - values-prod.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: vault
+    namespace: cert-manager-system
   syncPolicy:
     automated:
       prune: true

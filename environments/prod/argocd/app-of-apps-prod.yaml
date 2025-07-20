@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/pavliha/aircast-gitops.git
     targetRevision: HEAD
-    path: applications/infrastructure
+    path: applications/infrastructure/prod
     directory:
       recurse: true
       # Template applications for prod environment

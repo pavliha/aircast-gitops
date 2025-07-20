@@ -1,28 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infrastructure-apps-local
+  name: vault
   namespace: argocd
   labels:
-    app.kubernetes.io/name: infrastructure-apps
-    app.kubernetes.io/part-of: bootstrap
-    environment: local
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/part-of: infrastructure
 spec:
   project: default
   source:
     repoURL: https://github.com/pavliha/aircast-gitops.git
-    targetRevision: master
-    path: applications/infrastructure/local
-    directory:
-      recurse: true
-      # Template applications for local environment
-      jsonnet:
-        extVars:
-          - name: environment
-            value: local
+    targetRevision: HEAD
+    path: infrastructure/vault
+    helm:
+      valueFiles:
+        - values-local.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: vault
   syncPolicy:
     automated:
       prune: true

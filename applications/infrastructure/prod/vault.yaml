@@ -1,23 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: external-secrets
+  name: vault
   namespace: argocd
   labels:
-    app.kubernetes.io/name: external-secrets
+    app.kubernetes.io/name: vault
     app.kubernetes.io/part-of: infrastructure
 spec:
   project: default
   source:
     repoURL: https://github.com/pavliha/aircast-gitops.git
     targetRevision: HEAD
-    path: infrastructure/external-secrets
+    path: infrastructure/vault
     helm:
       valueFiles:
-        - values-{{ .Values.environment }}.yaml
+        - values-prod.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: external-secrets-system
+    namespace: vault
   syncPolicy:
     automated:
       prune: true
@@ -34,9 +34,3 @@ spec:
         factor: 2
         maxDuration: 3m
   revisionHistoryLimit: 10
-  # External secrets depends on Vault being available
-  ignoreDifferences:
-    - group: external-secrets.io
-      kind: ClusterSecretStore
-      jsonPointers:
-        - /status
