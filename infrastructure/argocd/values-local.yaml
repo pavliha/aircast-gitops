@@ -9,6 +9,7 @@ argo-cd:
       # Allow local insecure connections
       tls.config: ""
       oidc.config: ""
+      application.instanceLabelKey: argocd.argoproj.io/instance
       
   # Use admin/admin for local development
   server:
