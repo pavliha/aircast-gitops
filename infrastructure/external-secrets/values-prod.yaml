@@ -44,7 +44,7 @@ external-secrets:
 vaultSecretStore:
   enabled: true
   name: vault-kv-secret
-  vaultServer: "http://vault:8200"
+  vaultServer: "http://vault.vault.svc.cluster.local:8200"
   vaultPath: "secret"
   vaultVersion: "v2"
   tokenSecret:
