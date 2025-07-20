@@ -16,9 +16,11 @@ spec:
     helm:
       values: |
         auth:
-          postgresPassword: "password"
+          existingSecret: "postgresql-credentials"
+          secretKeys:
+            adminPasswordKey: "postgres-password"
+            userPasswordKey: "password"
           username: "postgres"
-          password: "password"
           database: "aircast_local"
         
         primary:
