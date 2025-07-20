@@ -3,22 +3,28 @@ argo-cd:
   # Disable dex for local development
   configs:
     params:
-      server.insecure: false
+      server.insecure: true
     cm:
       url: "https://argocd.aircast.localhost"
-      oidc.config: |
-        name: GitHub
-        issuer: https://github.com
-        clientId: $argocd-github-oauth:clientId
-        clientSecret: $argocd-github-oauth:clientSecret
-        requestedScopes: ["user:email", "read:org"]
-        requestedIDTokenClaims: {"groups": {"essential": true}}
+      dex.config: |
+        connectors:
+        - type: github
+          id: github
+          name: GitHub
+          config:
+            clientID: $argocd-github-oauth:clientId
+            clientSecret: $argocd-github-oauth:clientSecret
+            orgs:
+            - name: aircast
+              teams:
+              - dev-team
       policy.default: role:readonly
       policy.csv: |
         p, role:admin, applications, *, */*, allow
         p, role:admin, clusters, *, *, allow
         p, role:admin, repositories, *, *, allow
         g, aircast:dev-team, role:admin
+        g, github:dev-team, role:admin
       application.instanceLabelKey: argocd.argoproj.io/instance
       
   # Use admin/admin for local development
@@ -38,8 +44,9 @@ argo-cd:
         cpu: 500m
         memory: 512Mi
     
-    # Remove insecure flag to enable OIDC
-    extraArgs: []
+    # Disable certificate validation for local
+    extraArgs:
+      - --insecure
 
   # Basic controller resources
   controller:
