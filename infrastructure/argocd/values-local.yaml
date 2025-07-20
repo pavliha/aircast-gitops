@@ -27,11 +27,11 @@ argo-cd:
     # Basic resources for local
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 50m
+        memory: 64Mi
       limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 250m
+        memory: 256Mi
     
     # Disable certificate validation for local
     extraArgs:
@@ -41,21 +41,21 @@ argo-cd:
   controller:
     resources:
       requests:
-        cpu: 100m
-        memory: 256Mi
+        cpu: 50m
+        memory: 128Mi
       limits:
-        cpu: 1000m
-        memory: 1Gi
+        cpu: 500m
+        memory: 512Mi
 
   # Basic repo server resources
   repoServer:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 50m
+        memory: 64Mi
       limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 250m
+        memory: 256Mi
 
   # Basic application set controller
   applicationSet:
