@@ -6,25 +6,19 @@ argo-cd:
       server.insecure: true
     cm:
       url: "https://argocd.aircast.localhost"
-      dex.config: |
-        connectors:
-        - type: github
-          id: github
-          name: GitHub
-          config:
-            clientID: $argocd-github-oauth:clientId
-            clientSecret: $argocd-github-oauth:clientSecret
-            orgs:
-            - name: aircast
-              teams:
-              - dev-team
+      oidc.config: |
+        name: Vault
+        issuer: https://vault.aircast.localhost/v1/identity/oidc
+        clientId: $argocd-vault-oidc:clientId
+        clientSecret: $argocd-vault-oidc:clientSecret
+        requestedScopes: ["openid", "profile", "email"]
+        requestedIDTokenClaims: {"groups": {"essential": true}}
       policy.default: role:readonly
       policy.csv: |
         p, role:admin, applications, *, */*, allow
         p, role:admin, clusters, *, *, allow
         p, role:admin, repositories, *, *, allow
-        g, aircast:dev-team, role:admin
-        g, github:dev-team, role:admin
+        g, pavlokostiuk, role:admin
       application.instanceLabelKey: argocd.argoproj.io/instance
       
   # Use admin/admin for local development
