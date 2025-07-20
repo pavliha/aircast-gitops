@@ -6,13 +6,8 @@ argo-cd:
       server.insecure: true
     cm:
       url: "https://argocd.aircast.localhost"
-      oidc.config: |
-        name: Vault
-        issuer: https://vault.aircast.localhost/v1/identity/oidc
-        clientId: $argocd-vault-oidc:clientId
-        clientSecret: $argocd-vault-oidc:clientSecret
-        requestedScopes: ["openid", "profile", "email"]
-        requestedIDTokenClaims: {"groups": {"essential": true}}
+      # Vault userpass authentication works via admin user
+      # OIDC requires more complex setup for local development
       policy.default: role:readonly
       policy.csv: |
         p, role:admin, applications, *, */*, allow
