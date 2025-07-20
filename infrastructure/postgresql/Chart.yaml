@@ -1,0 +1,11 @@
+apiVersion: v2
+name: postgresql-infrastructure
+description: PostgreSQL infrastructure setup for Aircast
+type: application
+version: 0.1.0
+appVersion: "15.0"
+
+dependencies:
+  - name: postgresql
+    version: 12.12.10
+    repository: https://charts.bitnami.com/bitnami

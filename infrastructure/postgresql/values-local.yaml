@@ -1,0 +1,23 @@
+postgresql:
+  auth:
+    postgresPassword: "password"
+    username: "postgres"
+    password: "password"
+    database: "aircast_local"
+  
+  primary:
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: "standard"
+    
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+  
+  metrics:
+    enabled: false

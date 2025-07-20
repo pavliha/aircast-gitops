@@ -1,0 +1,25 @@
+postgresql:
+  auth:
+    existingSecret: "postgresql-credentials"
+    secretKeys:
+      adminPasswordKey: "postgres-password"
+      userPasswordKey: "password"
+    username: "postgres"
+    database: "aircast_dev"
+  
+  primary:
+    persistence:
+      enabled: true
+      size: 5Gi
+      storageClass: "gp2"
+    
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "500m"
+      limits:
+        memory: "1Gi"
+        cpu: "1000m"
+  
+  metrics:
+    enabled: true
