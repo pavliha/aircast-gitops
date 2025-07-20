@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/pavliha/aircast-gitops.git
-    targetRevision: HEAD
+    targetRevision: master
     path: applications/infrastructure
     directory:
       recurse: true
