@@ -84,7 +84,7 @@ ingress:
   enabled: true
   className: nginx
   annotations:
-    cert-manager.io/issuer: "false"
+    cert-manager.io/cluster-issuer: ""
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
   hosts:
@@ -93,6 +93,6 @@ ingress:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: aircast-tls
+    - secretName: aircast-mkcert-tls
       hosts:
         - argocd.aircast.localhost
