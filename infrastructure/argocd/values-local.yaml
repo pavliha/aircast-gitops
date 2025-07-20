@@ -84,6 +84,7 @@ ingress:
   enabled: true
   className: nginx
   annotations:
+    cert-manager.io/issuer: "false"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
   hosts:
