@@ -10,15 +10,33 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/pavliha/aircast-gitops.git
-    targetRevision: master
-    path: infrastructure/postgresql
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: postgresql
+    targetRevision: 12.12.10
     helm:
-      valueFiles:
-        - values-local.yaml
-      parameters:
-        - name: environment
-          value: local
+      values: |
+        auth:
+          postgresPassword: "password"
+          username: "postgres"
+          password: "password"
+          database: "aircast_local"
+        
+        primary:
+          persistence:
+            enabled: true
+            size: 1Gi
+            storageClass: "standard"
+          
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+        
+        metrics:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: default
