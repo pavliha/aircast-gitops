@@ -45,6 +45,6 @@ ingress:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: vault-local-tls
+    - secretName: aircast-tls
       hosts:
         - vault.aircast.localhost

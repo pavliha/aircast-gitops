@@ -93,6 +93,6 @@ ingress:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: argocd-local-tls
+    - secretName: aircast-tls
       hosts:
         - argocd.aircast.localhost
