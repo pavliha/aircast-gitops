@@ -1,3 +1,6 @@
+# Environment for External Secret templating
+environment: prod
+
 postgresql:
   auth:
     existingSecret: "postgresql-credentials"

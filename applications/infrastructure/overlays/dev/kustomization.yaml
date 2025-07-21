@@ -67,35 +67,11 @@ patches:
         path: /spec/source/helm/valueFiles/0
         value: values-dev.yaml
 
-  # PostgreSQL - dev database name and medium resources
+  # PostgreSQL - use dev values
   - target:
       kind: Application
       name: postgresql
     patch: |-
       - op: replace
-        path: /spec/source/helm/values
-        value: |
-          auth:
-            existingSecret: "postgresql-credentials"
-            secretKeys:
-              adminPasswordKey: "postgres-password"
-              userPasswordKey: "password"
-            username: "postgres"
-            database: "aircast_dev"
-          
-          primary:
-            persistence:
-              enabled: true
-              size: 5Gi
-              storageClass: "gp2"
-            
-            resources:
-              requests:
-                memory: "512Mi"
-                cpu: "500m"
-              limits:
-                memory: "1Gi"
-                cpu: "1000m"
-          
-          metrics:
-            enabled: true
+        path: /spec/source/helm/valueFiles/0
+        value: values-dev.yaml

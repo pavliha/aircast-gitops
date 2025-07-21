@@ -9,35 +9,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://charts.bitnami.com/bitnami
-    chart: postgresql
-    targetRevision: 12.12.10
+    repoURL: https://github.com/pavliha/aircast-gitops.git
+    targetRevision: HEAD
+    path: infrastructure/postgresql
     helm:
-      values: |
-        auth:
-          existingSecret: "postgresql-credentials"
-          secretKeys:
-            adminPasswordKey: "postgres-password"
-            userPasswordKey: "password"
-          username: "postgres"
-          database: "aircast_local"  # Will be patched per environment
-        
-        primary:
-          persistence:
-            enabled: true
-            size: 1Gi  # Will be patched per environment
-            storageClass: "standard"  # Will be patched per environment
-          
-          resources:
-            requests:
-              memory: "256Mi"  # Will be patched per environment
-              cpu: "250m"
-            limits:
-              memory: "512Mi"  # Will be patched per environment
-              cpu: "500m"
-        
-        metrics:
-          enabled: false  # Will be patched per environment
+      valueFiles:
+        - values-local.yaml  # Will be patched per environment
   destination:
     server: https://kubernetes.default.svc
     namespace: local  # Will be patched per environment

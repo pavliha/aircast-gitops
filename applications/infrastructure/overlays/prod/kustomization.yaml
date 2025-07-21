@@ -67,38 +67,11 @@ patches:
         path: /spec/source/helm/valueFiles/0
         value: values-prod.yaml
 
-  # PostgreSQL - prod database name and large resources
+  # PostgreSQL - use prod values
   - target:
       kind: Application
       name: postgresql
     patch: |-
       - op: replace
-        path: /spec/source/helm/values
-        value: |
-          auth:
-            existingSecret: "postgresql-credentials"
-            secretKeys:
-              adminPasswordKey: "postgres-password"
-              userPasswordKey: "password"
-            username: "postgres"
-            database: "aircast_prod"
-          
-          primary:
-            persistence:
-              enabled: true
-              size: 20Gi
-              storageClass: "gp2"
-            
-            resources:
-              requests:
-                memory: "1Gi"
-                cpu: "1000m"
-              limits:
-                memory: "2Gi"
-                cpu: "2000m"
-          
-          metrics:
-            enabled: true
-            
-          backup:
-            enabled: true
+        path: /spec/source/helm/valueFiles/0
+        value: values-prod.yaml
