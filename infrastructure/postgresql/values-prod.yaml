@@ -5,8 +5,8 @@ postgresql:
   auth:
     existingSecret: "postgresql-credentials"
     secretKeys:
-      adminPasswordKey: "postgres-password"
-      userPasswordKey: "password"
+      adminPasswordKey: "db-admin-password"
+      userPasswordKey: "db-user-password"
     username: "postgres"
     database: "aircast_prod"
   
