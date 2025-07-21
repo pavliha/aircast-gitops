@@ -1,22 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infrastructure-apps-dev
+  name: vault
   namespace: argocd
   labels:
-    app.kubernetes.io/name: infrastructure-apps
-    app.kubernetes.io/part-of: bootstrap
-    environment: dev
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/part-of: infrastructure
 spec:
   project: default
   source:
     repoURL: https://github.com/pavliha/aircast-gitops.git
     targetRevision: HEAD
-    path: applications/infrastructure/overlays/dev
-    kustomize: {}
+    path: infrastructure/vault
+    helm:
+      valueFiles:
+        - values-local.yaml  # Will be patched per environment
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: vault
   syncPolicy:
     automated:
       prune: true

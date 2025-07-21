@@ -12,14 +12,8 @@ spec:
   source:
     repoURL: https://github.com/pavliha/aircast-gitops.git
     targetRevision: master
-    path: applications/infrastructure/local
-    directory:
-      recurse: true
-      # Template applications for local environment
-      jsonnet:
-        extVars:
-          - name: environment
-            value: local
+    path: applications/infrastructure/overlays/local
+    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

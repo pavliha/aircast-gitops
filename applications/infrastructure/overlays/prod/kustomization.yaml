@@ -1,0 +1,74 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+commonLabels:
+  environment: prod
+
+nameSuffix: -prod
+
+patches:
+  # Vault - use prod values
+  - target:
+      kind: Application
+      name: vault
+    patch: |-
+      - op: replace
+        path: /spec/source/helm/valueFiles/0
+        value: values-prod.yaml
+
+  # Cert-manager - use prod values  
+  - target:
+      kind: Application
+      name: cert-manager
+    patch: |-
+      - op: replace
+        path: /spec/source/helm/valueFiles/0
+        value: values-prod.yaml
+
+  # External-secrets - use prod values
+  - target:
+      kind: Application
+      name: external-secrets
+    patch: |-
+      - op: replace
+        path: /spec/source/helm/valueFiles/0
+        value: values-prod.yaml
+
+  # PostgreSQL - prod database name and large resources
+  - target:
+      kind: Application
+      name: postgresql
+    patch: |-
+      - op: replace
+        path: /spec/source/helm/values
+        value: |
+          auth:
+            existingSecret: "postgresql-credentials"
+            secretKeys:
+              adminPasswordKey: "postgres-password"
+              userPasswordKey: "password"
+            username: "postgres"
+            database: "aircast_prod"
+          
+          primary:
+            persistence:
+              enabled: true
+              size: 20Gi
+              storageClass: "gp2"
+            
+            resources:
+              requests:
+                memory: "1Gi"
+                cpu: "1000m"
+              limits:
+                memory: "2Gi"
+                cpu: "2000m"
+          
+          metrics:
+            enabled: true
+            
+          backup:
+            enabled: true

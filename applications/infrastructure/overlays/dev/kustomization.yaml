@@ -1,0 +1,71 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+commonLabels:
+  environment: dev
+
+nameSuffix: -dev
+
+patches:
+  # Vault - use dev values
+  - target:
+      kind: Application
+      name: vault
+    patch: |-
+      - op: replace
+        path: /spec/source/helm/valueFiles/0
+        value: values-dev.yaml
+
+  # Cert-manager - use dev values  
+  - target:
+      kind: Application
+      name: cert-manager
+    patch: |-
+      - op: replace
+        path: /spec/source/helm/valueFiles/0
+        value: values-dev.yaml
+
+  # External-secrets - use dev values
+  - target:
+      kind: Application
+      name: external-secrets
+    patch: |-
+      - op: replace
+        path: /spec/source/helm/valueFiles/0
+        value: values-dev.yaml
+
+  # PostgreSQL - dev database name and medium resources
+  - target:
+      kind: Application
+      name: postgresql
+    patch: |-
+      - op: replace
+        path: /spec/source/helm/values
+        value: |
+          auth:
+            existingSecret: "postgresql-credentials"
+            secretKeys:
+              adminPasswordKey: "postgres-password"
+              userPasswordKey: "password"
+            username: "postgres"
+            database: "aircast_dev"
+          
+          primary:
+            persistence:
+              enabled: true
+              size: 5Gi
+              storageClass: "gp2"
+            
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "500m"
+              limits:
+                memory: "1Gi"
+                cpu: "1000m"
+          
+          metrics:
+            enabled: true
