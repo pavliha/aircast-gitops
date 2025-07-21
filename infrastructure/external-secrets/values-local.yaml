@@ -40,4 +40,4 @@ vaultSecretStore:
   tokenSecret:
     name: vault-token
     key: token
-    value: myroot  # Local dev token
+    # Note: vault-token secret is created by Vault itself, not by this chart
