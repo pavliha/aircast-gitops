@@ -40,7 +40,7 @@ spec:
           enabled: false  # Will be patched per environment
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: postgresql  # Will be patched per environment
   syncPolicy:
     automated:
       prune: true
