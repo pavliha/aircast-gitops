@@ -8,14 +8,14 @@ commonLabels:
   environment: dev
 
 patches:
-  # Update namespaces for dev environment
+  # Consolidate to single namespace per environment
   - target:
       kind: Application
       name: vault
     patch: |-
       - op: replace
         path: /spec/destination/namespace
-        value: vault-dev
+        value: dev
 
   - target:
       kind: Application
@@ -23,7 +23,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/destination/namespace
-        value: cert-manager-dev
+        value: cert-manager-system
 
   - target:
       kind: Application
@@ -31,7 +31,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/destination/namespace
-        value: external-secrets-dev
+        value: external-secrets-system
 
   - target:
       kind: Application
@@ -39,7 +39,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/destination/namespace
-        value: postgresql-dev
+        value: dev
   # Vault - use dev values
   - target:
       kind: Application

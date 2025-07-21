@@ -17,7 +17,7 @@ spec:
         - values-local.yaml  # Will be patched per environment
   destination:
     server: https://kubernetes.default.svc
-    namespace: vault  # Will be patched per environment
+    namespace: local  # Will be patched per environment
   syncPolicy:
     automated:
       prune: true

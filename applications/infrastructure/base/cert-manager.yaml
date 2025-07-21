@@ -17,7 +17,7 @@ spec:
         - values-local.yaml  # Will be patched per environment
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager  # Will be patched per environment
+    namespace: cert-manager-system
   syncPolicy:
     automated:
       prune: true

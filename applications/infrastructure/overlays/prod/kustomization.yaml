@@ -8,14 +8,14 @@ commonLabels:
   environment: prod
 
 patches:
-  # Update namespaces for prod environment
+  # Consolidate to single namespace per environment
   - target:
       kind: Application
       name: vault
     patch: |-
       - op: replace
         path: /spec/destination/namespace
-        value: vault-prod
+        value: prod
 
   - target:
       kind: Application
@@ -23,7 +23,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/destination/namespace
-        value: cert-manager-prod
+        value: cert-manager-system
 
   - target:
       kind: Application
@@ -31,7 +31,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/destination/namespace
-        value: external-secrets-prod
+        value: external-secrets-system
 
   - target:
       kind: Application
@@ -39,7 +39,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/destination/namespace
-        value: postgresql-prod
+        value: prod
   # Vault - use prod values
   - target:
       kind: Application
